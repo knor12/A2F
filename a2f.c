@@ -18,7 +18,7 @@ typedef enum {
 *This a private data structure not accessible outside the module
 */
 typedef struct{
-    char * A2F_string;
+    const char *A2F_string;
     float A2F_Result;
     float A2F_Decimal_Position;
     A2F_State_t current_state;
@@ -27,7 +27,7 @@ typedef struct{
 
 
 /*private function to initializes the parser data structure */
-static void a2f_Init(A2F_t * state_machine  , char * string){
+static void a2f_Init(A2F_t *state_machine, const char *string){
     
     state_machine->A2F_string = string;
     state_machine->A2F_Result =0.0;
@@ -72,7 +72,7 @@ static void a2f_Init(A2F_t * state_machine  , char * string){
                                                                     IsNull                    
 */
 
-static A2F_State_t a2f_InsetChar(A2F_t * state_machine  ){
+static A2F_State_t a2f_InsertChar(A2F_t *state_machine){
     
     
 #ifdef A2F_DEBUG
@@ -83,7 +83,7 @@ printf("Current State %d \n ." , state_machine->current_state);
 #endif     
     
     
-    char * str = state_machine->A2F_string;
+    const char *str = state_machine->A2F_string;
     
     switch (state_machine->current_state){
         case A2F_State_Integer:
@@ -144,7 +144,7 @@ printf("decimal addition %f \n ." , ((*str )-'0')*state_machine->A2F_Decimal_Pos
         default:
             state_machine->current_state =A2F_State_Error;        
     }
-    state_machine->A2F_string+=1;
+    state_machine->A2F_string += 1;
     return state_machine->current_state; 
 }
 
@@ -153,15 +153,18 @@ printf("decimal addition %f \n ." , ((*str )-'0')*state_machine->A2F_Decimal_Pos
 *This is the only  public function of the whole module, it gets a string and return the value of the parsed float by reference
 *it returns A2F_SUCCESS on success, otherwise it is a A2F_FAILURE. 
 */
-int A2F_GetFloat(float * result, char * string){
+int A2F_GetFloat(float *result, const char *string){
     
     A2F_State_t state; 
     A2F_t A2F_temp;
+    if (result == NULL || string == NULL) {
+        return A2F_FAILURE;
+    }
     a2f_Init(&A2F_temp  ,  string);
     
     do {
 		
-        state = a2f_InsetChar(&A2F_temp); 
+        state = a2f_InsertChar(&A2F_temp); 
 		
     }while(!(state==A2F_State_Error || state==A2F_State_Finished ));
     

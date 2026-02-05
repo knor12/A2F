@@ -14,7 +14,7 @@
 *output result: a float pointer value of the parsed string supplied by string.
 *output returned: equals A2F_SUCCESS on success, otherwise A2F_FAILURE.  
 */
-int A2F_GetFloat(float * result, char * string);
+int A2F_GetFloat(float *result, const char *string);
 
 
 #endif /* A2F_H */
